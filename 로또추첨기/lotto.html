@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .ball {
+            display: inline-block;
+            border: 1px solid black;
+            border-radius: 20px;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 20px;
+            text-align: center;
+            margin-right: 20px;
+        }
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="result">추첨 결과는? </div>
+    <div id="bonus">보너스: </div>
+
+
+
+    <script>
+        // 크기가 45인 배열 생성 후 각 배열의 값에 1~45 값 넣어주기
+        const candidate = Array(45).fill().map((element, index) => index + 1);
+
+        // 피셔예이츠 셔플 : 전체를 섞어버리고 섞인 배열 앞에서부터 하나씩 가져오기
+        const shuffle = [];
+        // candidate 배열의 값이 전부 사라질 때 까지
+        while (candidate.length > 0) {
+            // 0 ~ candidate의 길이 중 랜덤으로 하나 인덱스 추출
+            const random = Math.floor(Math.random() * candidate.length);
+            // 랜덤 인덱스부터 1개 splice하여 저장
+            const spliceArray = candidate.splice(random, 1);
+            // 저장된 배열의 값 value로 이동
+            const value = spliceArray[0];
+            // shuffle 배열에 하나씩 추가
+            shuffle.push(value);
+        }
+
+        // 위에서 뽑은 숫자들을 오름차순으로 정렬
+        const winBalls = shuffle.slice(0, 6).sort((a, b) => a - b);
+        const bonus = shuffle[6];
+
+        // <div>추첨결과는?
+        const $result = document.querySelector("#result");
+        // <div>보너스는?
+        const $bonus = document.querySelector("#bonus");
+
+
+        function colorize(number, $tag){
+            if(number<10){
+                $tag.style.backgroundColor = "red";
+            }
+            else if (number<20){
+                $tag.style.backgroundColor = "orange";
+                $tag.style.color = "white";
+            }
+            else if (number<30){
+                $tag.style.backgroundColor = "yellow";
+            }
+            else if (number<40){
+                $tag.style.backgroundColor = "green";
+                $tag.style.color = "white";
+            }
+            else if (number<50){
+                $tag.style.backgroundColor = "blue";
+                $tag.style.color = "white";
+            }
+            else{
+                $tag.style.backgroundColor = "black";
+                $tag.style.color = "white";
+            }
+        }
+
+
+        // 공 뽑기
+        for (let i = 0; i < winBalls.length; i++) {
+            // setTimeout( function, miliSec)
+            // setTimeout내 코드가 컴파일되고 sec뒤에 실행
+            // for문 사용시 (i+1)*500을 하지 않으면 각 setTimeout간 간격이 
+            // 거의 없기 때문에 사실상 동시에 실행하게 됨
+            setTimeout(() => {
+                const $ball = document.createElement("div");
+                // class이름 추가하기, className
+                $ball.className = "ball";
+                $ball.textContent = winBalls[i];
+                
+                if (i === winBalls.length - 1) {
+                    colorize(50,$ball);
+                    $bonus.appendChild($ball);
+                } else {
+                    colorize(winBalls[i],$ball);
+                    $result.appendChild($ball);
+                }
+
+            }, (i + 1) * 500);
+        }
+    </script>
+</body>
+
+</html>

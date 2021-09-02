@@ -1,0 +1,150 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>가위바위보</title>
+    <style>
+        #computer {
+            width: 142px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="computer"></div>
+    <div>
+        <button id="scissors" class="btn">가위</button>
+        <button id="rock" class="btn">바위</button>
+        <button id="paper" class="btn">보</button>
+    </div>
+    <div id="score">0</div>
+    <script>
+        const $computer = document.querySelector('#computer');
+        const $score = document.querySelector('#score');
+        const $rock = document.querySelector('#rock');
+        const $scissors = document.querySelector('#scissors');
+        const $paper = document.querySelector('#paper');
+        const IMG_URL = './images/rsp.png';
+
+        const rspX = {
+            scissorsX: '0px',
+            rockX: '-205px',
+            paperX: '-397px',
+
+        };
+
+
+        // 처음에 보여지는 이미지 (가위) 
+        $computer.style.background = `no-repeat url(${IMG_URL}) ${rspX.scissorsX} 0px`;
+        $computer.style.backgroundSize = 'auto 180px';
+        let computerChoice = "scissorsX";
+        // 이후 빠르게 변경되는 이미지 함수
+        const changeComputerHand = () => {
+
+            if (computerChoice === "scissorsX") {
+                computerChoice = "rockX";
+            } else if (computerChoice === "rockX") {
+                computerChoice = "paperX";
+            } else if (computerChoice === "paperX") {
+                computerChoice = "scissorsX";
+            }
+            // 주의 computerChoice는 문자열이다. 객체의 속성을 불러올 때 객체.이름 또는 객체["이름"] 이렇게 한다.
+            // 하지만 객체."이름" 또는 객체[이름]은 안된다.
+            // background만 변경시 backgroundSize 리셋됨, 둘이 같이 선언해주어라
+            $computer.style.background = `no-repeat url(${IMG_URL}) ${rspX[computerChoice]} 0px`;
+            $computer.style.backgroundSize = 'auto 180px';
+        };
+
+        // rsp를 숫자로
+        const rspNumber = {
+            scissorsX: 0,
+            rockX: -1,
+            paperX: 1,
+        }
+
+        // 가위바위보 승패 결정 함수
+        let count = 0;
+        let myScore = 0;
+        const compare = (myChoice, computerChoice) => {
+
+            // 가위: 0, 바위 : -1 , 보 : 1
+            // 둘 중 하나라도 가위일 경우에는 결과값에 - 붙혀줌
+            // 가위가 없다면 정상적으로 비교한 값이 결과값
+
+            let myNum = rspNumber[myChoice];
+            let comNum = rspNumber[computerChoice];
+            let result;
+
+            if (myChoice === "scissorsX" || computerChoice === "scissorsX") {
+                result = -(myNum - comNum);
+            } else {
+                result = myNum - comNum;
+            }
+
+            if (result > 0) {
+                // myNum 승
+                console.log("승리");
+                myScore++;
+            } else if (result < 0) {
+                // comNum 승
+                console.log("패배");
+                myScore--;
+            } else {
+                // 비김
+                console.log("비김");
+            }
+
+            count++;
+            // 3판 전에 승패가 이미 결정 나면 바로 게임 종료
+            if(myScore === 2 || myScore === -2) count = 3;
+            $score.innerText = myScore;
+        }
+
+        let intervalId = setInterval(changeComputerHand, 50);
+        let clickable = true;
+
+        const clickButton = () => {
+            if (clickable) {
+                // setInterval 삭제하여 손모양 안돌아가게 함( 홀딩 )
+                clearInterval(intervalId);
+                clickable = false;
+
+
+                // 사용자가 클릭한 버튼의 종류 (가위,바위,보 중 1개)
+                const myChoice = event.target.id + 'X';
+                // 컴퓨터와 사용자의 손모양 비교
+                compare(myChoice, computerChoice);
+
+                // 3번째 판 이후에 결과
+                if (count >= 3) {
+                    if (myScore > 0) {
+                        alert("승리하였습니다.");
+                    } else if (myScore < 0) {
+                        alert("패배하였습니다.");
+                    } else {
+                        alert("비겼습니다.");
+                    }
+                    // 초기화
+                    count = 0;
+                    myScore = 0;
+                }
+
+
+                // 2초 이후 홀딩 해제
+                setTimeout(() => {
+                    // 코드가 실행되는 시점(2초후)에 다시 클릭 가능
+                    clickable = true;
+                    intervalId = setInterval(changeComputerHand, 50);
+                }, 2000)
+
+            }
+        };
+
+        $scissors.addEventListener('click', clickButton);
+        $rock.addEventListener('click', clickButton);
+        $paper.addEventListener('click', clickButton);
+    </script>
+</body>
+
+</html>

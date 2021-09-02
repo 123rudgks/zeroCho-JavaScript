@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>끝말잇기</title>
+</head>
+
+<body>
+    <div><span id="order">1</span>번째 참가자</div>
+    <div>제시어 : <span id="word"></span></div>
+    <input type="text">
+    <button>입력</button>
+
+
+
+    <script>
+        const number = parseInt(prompt("몇 명이 참가하시나요?"), 10); // prompt는 문자열로 인풋 받음, parseInt(값,진수)
+
+
+        const $button = document.querySelector('button'); //button 태그
+        const $input = document.querySelector('input'); // input 태그
+        const $word = document.querySelector('#word'); // 제시어 text
+        const $order = document.querySelector('#order'); // n번째 참가자에서 n
+
+        let word; // 제시어
+        let newWord; // 다음 단어
+
+        $input.focus();
+
+        const onInput = (event) => { // input 상자에 입력 시
+            newWord = event.target.value; // event 발생한 타겟의 값
+        };
+
+        const onClickButton = () => {
+            if (!word || word[word.length - 1] === newWord[0]) {
+                if ( newWord.length === 3) {
+                    word = newWord;
+                    $word.textContent = word; // 제시어에 보여주기, 그 외 태그들은 textContent
+                    const order = Number($order.textContent); // textContent는 문자열이므로 숫자로 변경
+
+                    if (order === number) {
+                        $order.textContent = 1; // textContent에 값넣으면 알아서 문자열로 형변환함
+                    } else {
+                        $order.textContent = order + 1;
+                    }
+                } else {
+                    // 비어 있지 않다.
+                    alert("3글자를 맞추어 주세요");
+                }
+            } else {
+                alert("옳바르지 않습니다.");
+            }
+
+            $input.value = '';
+            $input.focus();
+        };
+
+        if (!number) { // prompt에서 null값을 받았을 경우 , 취소를 눌렀을 경우
+            alert("게임 취소");
+        } else {
+            const yesOrNo = confirm(number + "명이서 플레이를 시작합니다."); // 확인, 취소 알림문
+            $input.addEventListener('input', onInput); // 인풋태그에 문자 입력시 newWord에 저장
+            $button.addEventListener('click', onClickButton); // 버튼 클릭시 onClickButton함수 실행
+        }
+
+
+
+        /*
+        document.querySelector("input").addEventListener('input', (event)=>{
+            console.log('글자 입력', event.target.value);
+        });
+        document.querySelector('button').addEventListener('click', function(){});
+        */
+    </script>
+</body>
+
+</html>
